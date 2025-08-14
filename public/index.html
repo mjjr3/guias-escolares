@@ -1,225 +1,176 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>📚 Guías Colegio</title>
 <style>
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: #132035;
-    margin: 0;
-    padding: 20px;
-    color: #333;
-  }
-  h1 {
-    text-align: center;
-    color: white;
-    margin-bottom: 20px;
-  }
-
-  /* --- Loading --- */
-  #loading {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(19,32,53,0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    z-index: 9999;
-    color: white;
-    font-size: 18px;
+  :root{
+    --bg:#132035;
+    --card:#ffffff;
+    --muted:#f0f4fb;
+    --muted-2:#dce6f7;
+    --primary:#2980b9;
+    --ok:#27ae60;
+    --shadow:0 3px 8px rgba(0,0,0,.12);
+    --radius:12px;
+    --maxw:980px;
   }
 
-  .book-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    animation: bounce 1s infinite;
+  /* Base */
+  html,body{height:100%;}
+  body{
+    font-family:'Segoe UI',system-ui,Arial,sans-serif;
+    background:var(--bg);
+    margin:0;
+    color:#111;
+  }
+  .page{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:20px 16px 40px;
+  }
+  h1{
+    text-align:center;
+    color:#fff;
+    margin:10px 0 18px;
+    letter-spacing:.3px;
   }
 
-  .book {
-    width: 60px;
-    height: 15px;
-    background: #f39c12;
-    border-radius: 4px;
-    transform-origin: center;
+  /* Loading */
+  #loading{
+    position:fixed;inset:0;
+    background:rgba(19,32,53,.92);
+    display:none;
+    justify-content:center;align-items:center;flex-direction:column;
+    z-index:9999;color:#fff;font-size:18px;text-align:center;padding:16px;
   }
+  .book-stack{display:flex;flex-direction:column;gap:6px;animation:bounce 1s infinite;}
+  .book{width:64px;height:14px;background:#f39c12;border-radius:4px}
+  .book:nth-child(2){background:#e74c3c;width:54px;height:12px}
+  .book:nth-child(3){background:#3498db;width:44px;height:10px}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
 
-  .book:nth-child(2) { background: #e74c3c; width: 50px; height: 12px; }
-  .book:nth-child(3) { background: #3498db; width: 40px; height: 10px; }
+  /* Filtros */
+  .filters{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:12px;
+    margin:0 auto 18px;
+    max-width:var(--maxw);
+  }
+  select,input[type="search"]{
+    padding:10px 12px;font-size:14px;border-radius:10px;border:1px solid #d0d7e2;outline:none;transition:.2s;
+    background:#fff;
+  }
+  select:hover,input[type="search"]:hover{border-color:var(--primary)}
+  input[type="search"]::placeholder{color:#9aa6b2}
 
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
+  /* Tarjetas Asignatura */
+  .asignatura-card{
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:14px;
+    margin:14px 0;
+    transition:transform .2s;
+    overflow:hidden;
   }
+  .asignatura-card:hover{transform:translateY(-2px)}
+  .asignatura-title{
+    font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;
+    user-select:none;
+  }
+  .asignatura-title .icon{transition:transform .25s}
+  .asignatura-title.open .icon{transform:rotate(90deg)}
 
-  /* --- Filtros --- */
-  .filters {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-bottom: 25px;
+  /* Semanas */
+  .semana-list{margin-top:10px;padding-left:6px}
+  .semana-item{
+    cursor:pointer;background:var(--muted);
+    padding:8px 10px;border-radius:10px;margin:10px 0;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    transition:background .15s;
   }
-  select, input[type="search"] {
-    padding: 8px 12px;
-    font-size: 14px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    outline: none;
-    transition: 0.2s;
-  }
-  select:hover, input[type="search"]:hover {
-    border-color: #2980b9;
-  }
+  .semana-item:hover{background:var(--muted-2)}
+  .semana-nombre{font-weight:600}
+  .chevron{transition:transform .2s}
+  .semana-item.open .chevron{transform:rotate(180deg)}
 
-  /* --- Tarjetas de asignaturas --- */
-  .asignatura-card {
-    background: #fff;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    padding: 15px;
-    transition: transform 0.2s;
+  /* Archivos */
+  .archivo-list{margin-top:8px;padding:2px 0 2px 10px}
+  .archivo-item{
+    display:grid;grid-template-columns:1fr auto;gap:10px;
+    align-items:center;background:#fff;border-radius:8px;padding:8px 10px;margin:6px 0;
+    box-shadow:0 1px 2px rgba(0,0,0,.06);
   }
-  .asignatura-card:hover {
-    transform: translateY(-2px);
+  .archivo-item a{
+    text-decoration:none;color:var(--primary);font-weight:600;
+    word-break:break-word; /* evita overflow en nombres largos */
+    overflow-wrap:anywhere;
   }
-  .asignatura-title {
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  .archivo-item button{
+    background:var(--ok);color:#fff;border:none;border-radius:8px;padding:7px 10px;
+    cursor:pointer;transition:.2s;white-space:nowrap;
   }
-  .asignatura-title .icon {
-    transition: transform 0.3s;
-  }
-  .asignatura-title.open .icon {
-    transform: rotate(90deg);
-  }
+  .archivo-item button:hover{background:#2ecc71}
 
-  /* --- Semanas --- */
-  .semana-list {
-    margin-top: 10px;
-    padding-left: 20px;
-  }
-  .semana-item {
-    cursor: pointer;
-    padding: 6px 8px;
-    border-radius: 8px;
-    background: #f0f4fb;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: background 0.2s;
-  }
-  .semana-item:hover {
-    background: #dce6f7;
-  }
+  /* Utilidades */
+  .hidden{display:none !important;}
 
-  /* --- Archivos --- */
-  .archivo-list {
-    margin-top: 5px;
-    padding-left: 15px;
-  }
-  .archivo-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #fff;
-    padding: 6px 10px;
-    margin-bottom: 5px;
-    border-radius: 6px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  }
-  .archivo-item a {
-    text-decoration: none;
-    color: #2980b9;
-    font-weight: 500;
-  }
-  .archivo-item button {
-    background: #27ae60;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 5px 10px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  .archivo-item button:hover {
-    background: #2ecc71;
-  }
-
-  /* --- Responsivo --- */
-  @media (max-width: 600px) {
-    .asignatura-title {
-      font-size: 16px;
-    }
-    .archivo-item a {
-      font-size: 14px;
-    }
-    .archivo-item button {
-      padding: 4px 8px;
-      font-size: 12px;
-    }
+  /* Responsive extras */
+  @media (max-width:700px){
+    .page{padding:16px 12px 36px}
+    .asignatura-title{font-size:16px}
+    .archivo-item{grid-template-columns:1fr;align-items:start}
+    .archivo-item button{justify-self:end}
   }
 </style>
 </head>
 <body>
-<h1>📚 Guías Colegio</h1>
+  <div class="page">
+    <h1>📚 Guías Colegio</h1>
 
-<div class="filters">
-  <select id="asignaturaFilter">
-    <option value="">Todas las asignaturas</option>
-  </select>
-  <select id="semanaFilter">
-    <option value="">Todas las semanas</option>
-  </select>
-  <input type="search" id="searchInput" placeholder="Buscar guía...">
-</div>
+    <!-- Filtros -->
+    <div class="filters">
+      <select id="asignaturaFilter">
+        <option value="">Todas las asignaturas</option>
+      </select>
+      <select id="semanaFilter">
+        <option value="">Todas las semanas</option>
+      </select>
+      <input type="search" id="searchInput" placeholder="Buscar guía...">
+    </div>
 
-<div id="treeContainer"></div>
-
-<!-- Loading -->
-<div id="loading">
-  <div class="book-stack">
-    <div class="book"></div>
-    <div class="book"></div>
-    <div class="book"></div>
+    <!-- Contenedor de árbol -->
+    <div id="treeContainer" aria-live="polite"></div>
   </div>
-  <div style="margin-top:10px;">Cargando guías, por favor espera... 📖</div>
-</div>
+
+  <!-- Loading -->
+  <div id="loading">
+    <div class="book-stack">
+      <div class="book"></div><div class="book"></div><div class="book"></div>
+    </div>
+    <div style="margin-top:10px">Cargando guías, por favor espera... 📖</div>
+  </div>
 
 <script>
 let guiasData = null;
 
 async function cargarGuias() {
-  // Mostrar loading
   document.getElementById("loading").style.display = "flex";
-
   try {
     const res = await fetch("/api/guias");
     guiasData = await res.json();
     actualizarFiltros();
     renderTree();
   } catch (err) {
-    alert("Error al cargar las guías");
     console.error(err);
+    alert("Error al cargar las guías");
   } finally {
-    // Ocultar loading
     document.getElementById("loading").style.display = "none";
   }
 }
-
-// ... Aquí va el resto de tus funciones: actualizarFiltros, renderTree, etc.
 
 function actualizarFiltros() {
   const asignaturaSelect = document.getElementById("asignaturaFilter");
@@ -233,25 +184,25 @@ function actualizarFiltros() {
   guiasData.hijos.forEach(asignatura => {
     if (asignatura.tipo === "carpeta") {
       asignaturas.add(asignatura.nombre);
-      asignatura.hijos.forEach(semana => {
-        if (semana.tipo === "carpeta" && semana.nombre.startsWith("Semana")) semanas.add(semana.nombre);
+      asignatura.hijos?.forEach(semana => {
+        if (semana.tipo === "carpeta" /* && semana.nombre.startsWith("Semana") */) {
+          semanas.add(semana.nombre);
+        }
       });
     }
   });
 
   asignaturaSelect.innerHTML = '<option value="">Todas las asignaturas</option>';
-  asignaturas.forEach(a => {
+  [...asignaturas].sort().forEach(a => {
     const opt = document.createElement("option");
-    opt.value = a;
-    opt.textContent = a;
+    opt.value = a; opt.textContent = a;
     asignaturaSelect.appendChild(opt);
   });
 
   semanaSelect.innerHTML = '<option value="">Todas las semanas</option>';
-  semanas.forEach(s => {
+  [...semanas].sort().forEach(s => {
     const opt = document.createElement("option");
-    opt.value = s;
-    opt.textContent = s;
+    opt.value = s; opt.textContent = s;
     semanaSelect.appendChild(opt);
   });
 }
@@ -267,56 +218,68 @@ function renderTree() {
   if (!guiasData) return;
 
   const asignaturaF = document.getElementById("asignaturaFilter").value.toLowerCase();
-  const semanaF = document.getElementById("semanaFilter").value.toLowerCase();
-  const searchF = document.getElementById("searchInput").value.toLowerCase();
+  const semanaF     = document.getElementById("semanaFilter").value.toLowerCase();
+  const searchF     = document.getElementById("searchInput").value.toLowerCase();
 
   guiasData.hijos.forEach(asignatura => {
     if (asignatura.tipo !== "carpeta") return;
     if (asignaturaF && asignatura.nombre.toLowerCase() !== asignaturaF) return;
 
     const card = document.createElement("div");
-    card.classList.add("asignatura-card");
+    card.className = "asignatura-card";
 
     const title = document.createElement("div");
-    title.classList.add("asignatura-title");
+    title.className = "asignatura-title";
     title.innerHTML = `<span class="icon">▶</span> ${asignatura.nombre}`;
     card.appendChild(title);
 
     const semanaList = document.createElement("div");
-    semanaList.classList.add("semana-list");
+    semanaList.className = "semana-list";
 
-    asignatura.hijos.forEach(semana => {
+    asignatura.hijos?.forEach(semana => {
       if (semana.tipo !== "carpeta") return;
       if (semanaF && semana.nombre.toLowerCase() !== semanaF) return;
 
       const semanaItem = document.createElement("div");
-      semanaItem.classList.add("semana-item");
-      semanaItem.textContent = semana.nombre;
+      semanaItem.className = "semana-item";
+      semanaItem.innerHTML = `<span class="semana-nombre">${semana.nombre}</span><span class="chevron">▼</span>`;
 
       const archivoList = document.createElement("div");
-      archivoList.classList.add("archivo-list");
+      archivoList.className = "archivo-list hidden";
 
-      semana.hijos.forEach(archivo => {
+      semana.hijos?.forEach(archivo => {
         if (archivo.tipo !== "archivo") return;
         if (searchF && !archivo.nombre.toLowerCase().includes(searchF)) return;
 
         const archivoItem = document.createElement("div");
-        archivoItem.classList.add("archivo-item");
+        archivoItem.className = "archivo-item";
         archivoItem.innerHTML = `
-          <a href="${archivo.url}" target="_blank">${archivo.nombre}</a>
-          <button onclick="window.open('${archivo.url}', '_blank').print()">🖨 Imprimir</button>
+          <a href="${archivo.url}" target="_blank" rel="noopener noreferrer">${archivo.nombre}</a>
+          <button type="button" onclick="(function(u){const w=window.open(u,'_blank'); if(w){w.focus(); w.print();}})('${archivo.url}')">🖨 Imprimir</button>
         `;
         archivoList.appendChild(archivoItem);
       });
 
-      semanaItem.appendChild(archivoList);
-      semanaList.appendChild(semanaItem);
+      // Mostrar mensaje si no hay archivos tras el filtro
+      if (!archivoList.children.length) {
+        const empty = document.createElement("div");
+        empty.className = "archivo-item";
+        empty.innerHTML = `<span>No hay guías para esta semana.</span>`;
+        archivoList.appendChild(empty);
+      }
 
       semanaItem.addEventListener("click", e => {
         e.stopPropagation();
         archivoList.classList.toggle("hidden");
+        semanaItem.classList.toggle("open");
       });
+
+      semanaList.appendChild(semanaItem);
+      semanaList.appendChild(archivoList);
     });
+
+    // Comienza colapsado
+    semanaList.classList.add("hidden");
 
     card.appendChild(semanaList);
     container.appendChild(card);
